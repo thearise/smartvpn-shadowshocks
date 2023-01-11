@@ -1,0 +1,89 @@
+<!--
+  Copyright 2018 The SmartVPN Authors
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE html>
+<!-- Default LTR direction will be changed dynamically for RTL locales. -->
+<html dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SmartVPN</title>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=no" />
+    <!-- See https://github.com/webcomponents/custom-elements#es5-vs-es2015 -->
+    <script src="webcomponentsjs/custom-elements-es5-adapter.js"></script>
+    <script src="cordova.js"></script>
+    <script type="text/javascript">
+      function onDeviceReady() {
+        document.removeEventListener('deviceready', onDeviceReady, false);
+        
+        // Set AdMobAds options:
+        admob.setOptions({
+          publisherId:           "ca-app-pub-1852458366311882/9160572164",  // Required
+          interstitialAdId:      "ca-app-pub-1852458366311882/4024667692",  // Optional
+          rewardedAdId: "ca-app-pub-1852458366311882/2328442648",
+          autoShowBanner:        true,  
+          autoShowInterstitial: true,                                     // Optional
+          autoShowRewarded:      true,                                     // Optional
+        });
+        
+        // Start showing banners (atomatic when autoShowBanner is set to true)
+        // admob.createBannerView();
+        // admob.requestInterstitialAd();
+        // admob.requestRewardedAd();
+
+        registerAdEvents();
+
+        // display a banner at startup
+        admob.createBannerView();
+        
+        // request an interstitial ad
+        admob.requestInterstitialAd();
+   
+        // request a rewarded ad
+        admob.requestRewardedAd();
+      }
+
+      function onAdLoaded(e) {
+        if (isAppForeground) {
+          if (e.adType === admob.AD_TYPE.AD_TYPE_BANNER) {
+            console.log("New banner received");
+          } else if (e.adType === admob.INTERSTITIAL) {
+            console.log("An interstitial has been loaded and autoshown. If you want to automatically show the interstitial ad, set 'autoShowInterstitial: true' in admob.setOptions() or remove it");
+            admob.showInterstitialAd();
+          } else if (e.adType === admob.AD_TYPE_REWARDED) {
+            console.log("New rewarded ad received");
+            admob.showRewardedAd();
+          }
+        }
+      }
+
+      function registerAdEvents() {
+        document.addEventListener(admob.events.onAdLoaded, onAdLoaded);
+        document.addEventListener(admob.events.onAdFailedToLoad, function (e) {});
+        document.addEventListener(admob.events.onAdOpened, function (e) {});
+        document.addEventListener(admob.events.onAdClosed, function (e) {});
+        document.addEventListener(admob.events.onAdLeftApplication, function (e) {});
+      }
+      
+      document.addEventListener("deviceready", onDeviceReady, true);
+
+      function interShow() {
+        console.log('clicked inter');
+      }
+    </script>
+  <script defer src="main.js"></script></head>
+  <body unresolved>
+    <app-root></app-root>
+  </body>
+</html>
